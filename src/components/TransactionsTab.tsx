@@ -8,11 +8,11 @@ import { getIcon, formatCurrency, formatDate, paymentMethods, months, years } fr
 import { Modal } from './Modal';
 
 function ExpenseForm({ editId, onClose }: { editId: number | null; onClose: () => void }) {
-  const { selectedYear, selectedMonth } = useAppStore();
+
   const cats = useLiveQuery(() => db.expenseCategories.toArray()) || [];
   const [date, setDate] = useState(() => {
-    const d = new Date(selectedYear, selectedMonth, 1);
-    return d.toISOString().split('T')[0];
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   });
   const [categoryId, setCategoryId] = useState(0);
   const [amount, setAmount] = useState('');
@@ -95,9 +95,12 @@ function ExpenseForm({ editId, onClose }: { editId: number | null; onClose: () =
 }
 
 function EarningForm({ editId, onClose }: { editId: number | null; onClose: () => void }) {
-  const { selectedYear, selectedMonth } = useAppStore();
+
   const cats = useLiveQuery(() => db.earningCategories.toArray()) || [];
-  const [date, setDate] = useState(() => new Date(selectedYear, selectedMonth, 1).toISOString().split('T')[0]);
+  const [date, setDate] = useState(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
   const [categoryId, setCategoryId] = useState(0);
   const [amount, setAmount] = useState('');
   const [source, setSource] = useState('');
