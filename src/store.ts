@@ -31,6 +31,8 @@ interface AppState {
   setEditingExpenseCategory: (id: number | null) => void;
   editingEarningCategory: number | null;
   setEditingEarningCategory: (id: number | null) => void;
+  isMobileMenuOpen: boolean;
+  setMobileMenuOpen: (isOpen: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -70,4 +72,6 @@ export const useAppStore = create<AppState>((set) => ({
   setEditingExpenseCategory: (id) => set({ editingExpenseCategory: id }),
   editingEarningCategory: null,
   setEditingEarningCategory: (id) => set({ editingEarningCategory: id }),
+  isMobileMenuOpen: false,
+  setMobileMenuOpen: (isOpen) => set({ isMobileMenuOpen: isOpen }),
 }));

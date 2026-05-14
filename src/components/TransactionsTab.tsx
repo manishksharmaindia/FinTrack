@@ -247,29 +247,29 @@ export function TransactionsTab() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="max-w-5xl mx-auto px-[32px] py-[32px] space-y-[32px]">
+      <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-6 md:space-y-8">
 
         {/* ── Header Row ── */}
-        <div className="flex items-center justify-between gap-[24px]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 md:gap-6">
           <div className="shrink-0">
             <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Transactions</h1>
             <p className="text-sm text-[var(--color-text-tertiary)] mt-1">Record and manage your finances</p>
           </div>
-          <div className="flex items-center gap-[16px] shrink-0">
+          <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
             <button onClick={() => { store.setEditingExpense(null); store.setShowAddExpenseModal(true); }}
-              className="flex items-center gap-[8px] px-[24px] py-[12px] rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all whitespace-nowrap">
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all whitespace-nowrap">
               <ArrowDownRight size={16} /> Expense
             </button>
             <button onClick={() => { store.setEditingEarning(null); store.setShowAddEarningModal(true); }}
-              className="flex items-center gap-[8px] px-[24px] py-[12px] rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all whitespace-nowrap">
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all whitespace-nowrap">
               <ArrowUpRight size={16} /> Earning
             </button>
           </div>
         </div>
 
         {/* ── Month Selector & Summary Cards ── */}
-        <div className="grid grid-cols-4 gap-[24px]">
-          <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-[20px] flex flex-col items-center justify-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-6">
+          <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-3 md:p-5 flex flex-col items-center justify-center col-span-2 sm:col-span-1">
             <div className="flex items-center gap-[12px]">
               <button onClick={prevMonth} className="p-2 rounded-lg hover:bg-[var(--color-surface-tertiary)] text-[var(--color-text-tertiary)] transition-colors"><ChevronLeft size={18} /></button>
               <div className="text-center min-w-[110px]">
@@ -287,20 +287,20 @@ export function TransactionsTab() {
             { label: 'Earnings', value: totalEarnings, color: 'text-emerald-500' },
             { label: 'Net Balance', value: netBalance, color: netBalance >= 0 ? 'text-emerald-500' : 'text-rose-500' },
           ].map((s) => (
-            <div key={s.label} className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-[20px]">
-              <p className="text-xs text-[var(--color-text-tertiary)] mb-2">{s.label}</p>
-              <p className={`text-xl font-bold ${s.color}`}>{formatCurrency(s.value)}</p>
+            <div key={s.label} className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-3 md:p-5 flex flex-col justify-center">
+              <p className="text-xs text-[var(--color-text-tertiary)] mb-1 md:mb-2">{s.label}</p>
+              <p className={`text-lg md:text-xl font-bold ${s.color}`}>{formatCurrency(s.value)}</p>
             </div>
           ))}
         </div>
 
         {/* ── Filter Row ── */}
-        <div className="flex items-center gap-[24px] flex-wrap">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-6 flex-wrap">
           {/* Type Filter Tabs */}
-          <div className="flex gap-1 bg-[var(--color-surface-tertiary)] border border-[var(--color-border)] rounded-xl p-1 shrink-0">
+          <div className="flex gap-1 bg-[var(--color-surface-tertiary)] border border-[var(--color-border)] rounded-xl p-1 overflow-x-auto hide-scrollbar shrink-0">
             {(['all', 'expense', 'earning'] as const).map((t) => (
               <button key={t} onClick={() => setTxType(t)}
-                className={`px-[20px] py-[8px] rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex-1 text-center ${
                   txType === t
                     ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm'
                     : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
@@ -325,22 +325,22 @@ export function TransactionsTab() {
           </div>
 
           {/* View Toggle */}
-          <div className="flex gap-1 bg-[var(--color-surface-tertiary)] border border-[var(--color-border)] rounded-xl p-1 shrink-0">
+          <div className="flex gap-1 bg-[var(--color-surface-tertiary)] border border-[var(--color-border)] rounded-xl p-1 shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
             <button onClick={() => setView('list')}
-              className={`px-3.5 py-2 rounded-lg transition-all ${
+              className={`flex-1 sm:flex-none flex justify-center px-4 py-2 rounded-lg transition-all ${
                 view === 'list'
                   ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm'
                   : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
               }`}>
-              <Filter size={15} />
+              <Filter size={16} />
             </button>
             <button onClick={() => setView('calendar')}
-              className={`px-3.5 py-2 rounded-lg transition-all ${
+              className={`flex-1 sm:flex-none flex justify-center px-4 py-2 rounded-lg transition-all ${
                 view === 'calendar'
                   ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm'
                   : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
               }`}>
-              <Calendar size={15} />
+              <Calendar size={16} />
             </button>
           </div>
         </div>

@@ -46,7 +46,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           >
-            <div className="flex items-center justify-between p-6 pb-4 border-b border-[var(--color-border)]">
+            <div className="flex items-center justify-between p-4 md:p-6 pb-3 md:pb-4 border-b border-[var(--color-border)]">
               <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">{title}</h2>
               <button
                 onClick={onClose}
@@ -55,7 +55,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
                 <X size={18} />
               </button>
             </div>
-            <div className="p-6 overflow-y-auto">{children}</div>
+            <div className="p-4 md:p-6 overflow-y-auto">{children}</div>
           </motion.div>
         </motion.div>
       )}

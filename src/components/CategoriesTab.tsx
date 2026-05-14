@@ -229,7 +229,7 @@ export function CategoriesTab() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="max-w-5xl mx-auto px-[32px] py-[32px] space-y-[32px]">
+      <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-6 md:space-y-8">
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Categories</h1>
@@ -237,35 +237,35 @@ export function CategoriesTab() {
         </div>
 
         {/* Section Toggle */}
-        <div className="flex items-center gap-[16px]">
-          <div className="flex bg-[var(--color-surface-tertiary)] rounded-xl p-[4px]">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-wrap">
+          <div className="flex bg-[var(--color-surface-tertiary)] rounded-xl p-1 overflow-x-auto hide-scrollbar shrink-0">
             <button onClick={() => setActiveSection('expense')}
-              className={`flex items-center gap-[8px] px-[16px] py-[8px] rounded-lg text-sm font-medium transition-all ${activeSection === 'expense' ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm' : 'text-[var(--color-text-tertiary)]'}`}>
+              className={`flex items-center justify-center flex-1 sm:flex-none gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeSection === 'expense' ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm' : 'text-[var(--color-text-tertiary)]'}`}>
               <Wallet size={16} /> Expenses ({expenseCategories.length})
             </button>
             <button onClick={() => setActiveSection('earning')}
-              className={`flex items-center gap-[8px] px-[16px] py-[8px] rounded-lg text-sm font-medium transition-all ${activeSection === 'earning' ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm' : 'text-[var(--color-text-tertiary)]'}`}>
+              className={`flex items-center justify-center flex-1 sm:flex-none gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeSection === 'earning' ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm' : 'text-[var(--color-text-tertiary)]'}`}>
               <TrendingUpIcon size={16} /> Earnings ({earningCategories.length})
             </button>
           </div>
-          <div className="flex-1" />
-          <div className="relative">
+          <div className="hidden sm:block flex-1" />
+          <div className="relative w-full sm:w-auto order-3 sm:order-none">
             <div className="absolute left-[14px] top-1/2 -translate-y-1/2 z-10 pointer-events-none">
               <Search size={16} className="text-[var(--color-text-tertiary)]" />
             </div>
             <input value={search} onChange={(e) => setSearch(e.target.value)}
               style={{ paddingLeft: '40px' }}
-              className="pr-[16px] py-[10px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm w-[240px] focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-[var(--color-text-primary)] transition-all"
+              className="pr-[16px] py-[10px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm w-full sm:w-[240px] focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-[var(--color-text-primary)] transition-all"
               placeholder="Search categories..." />
           </div>
           <button onClick={handleAdd}
-            className="flex items-center gap-[8px] px-[20px] py-[10px] rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 text-white text-sm font-medium hover:from-primary-600 hover:to-primary-700 shadow-md hover:shadow-lg transition-all">
+            className="flex items-center justify-center gap-[8px] px-[20px] py-[10px] rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 text-white text-sm font-medium hover:from-primary-600 hover:to-primary-700 shadow-md hover:shadow-lg transition-all w-full sm:w-auto order-2 sm:order-none">
             <Plus size={16} /> Add {activeSection === 'expense' ? 'Expense' : 'Earning'}
           </button>
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[24px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
           <AnimatePresence mode="popLayout">
             {filtered.map((cat) => (
               <CategoryCard key={cat.id} cat={cat} type={activeSection}

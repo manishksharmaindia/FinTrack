@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
+import { Menu } from 'lucide-react';
 import { useAppStore } from './store';
 import { seedDefaults } from './db';
 import { Sidebar } from './components/Sidebar';
 import { CategoriesTab } from './components/CategoriesTab';
 import { TransactionsTab } from './components/TransactionsTab';
 import { DashboardTab } from './components/DashboardTab';
+import logoUrl from './assets/logo.png';
 
 function App() {
-  const { activeTab, theme } = useAppStore();
+  const { activeTab, theme, setMobileMenuOpen } = useAppStore();
 
   useEffect(() => {
     seedDefaults();
@@ -18,9 +20,23 @@ function App() {
   }, [theme]);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[var(--color-surface-secondary)]">
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[var(--color-surface-secondary)] relative w-full max-w-full">
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between p-4 bg-[var(--color-surface)] border-b border-[var(--color-border)] shrink-0 z-30">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-[var(--color-border)] shrink-0">
+            <img src={logoUrl} alt="FinTrack" className="w-full h-full object-cover" />
+          </div>
+          <h1 className="font-bold text-[var(--color-text-primary)] text-lg">FinTrack</h1>
+        </div>
+        <button onClick={() => setMobileMenuOpen(true)} className="p-2 rounded-xl text-[var(--color-text-secondary)] bg-[var(--color-surface-tertiary)] hover:bg-[var(--color-border)] transition-colors">
+          <Menu size={24} />
+        </button>
+      </div>
+
       <Sidebar />
-      <main className="flex-1 flex flex-col overflow-hidden">
+      
+      <main className="flex-1 flex flex-col overflow-hidden relative max-w-full w-full">
         {activeTab === 0 && <CategoriesTab />}
         {activeTab === 1 && <TransactionsTab />}
         {activeTab === 2 && <DashboardTab />}

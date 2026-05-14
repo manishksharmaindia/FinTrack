@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { LayoutGrid, Receipt, BarChart3, Sun, Moon, Download, RotateCcw, Plus, Minus } from 'lucide-react';
+import { LayoutGrid, Receipt, BarChart3, Sun, Moon, Download, RotateCcw, Plus, Minus, X } from 'lucide-react';
 import { useAppStore } from '../store';
 import { exportExpensesCSV, exportEarningsCSV, importCSV, resetDatabase } from '../exportUtils';
 import logoUrl from '../assets/logo.png';
@@ -12,7 +12,7 @@ const tabs = [
 ];
 
 export function Sidebar() {
-  const { activeTab, setActiveTab, theme, toggleTheme, selectedYear } = useAppStore();
+  const { activeTab, setActiveTab, theme, toggleTheme, selectedYear, isMobileMenuOpen, setMobileMenuOpen } = useAppStore();
   const [showTools, setShowTools] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetPassword, setResetPassword] = useState('');
@@ -43,9 +43,25 @@ export function Sidebar() {
 
   return (
     <>
-      <div className="w-[280px] h-screen flex flex-col bg-[var(--color-surface)] border-r border-[var(--color-border)] shrink-0">
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+        />
+      )}
+
+      {/* Sidebar Container */}
+      <div
+        className={`fixed md:relative inset-y-0 left-0 z-50 w-[280px] h-full max-h-screen flex flex-col bg-[var(--color-surface)] border-r border-[var(--color-border)] shrink-0 transform transition-transform duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
+      >
         {/* Logo */}
-        <div className="px-[24px] pt-[32px] pb-[32px]">
+        <div className="flex items-center justify-between px-[24px] pt-[24px] pb-[24px] md:pt-[32px] md:pb-[32px]">
           <div className="flex items-center gap-[16px]">
             <div className="w-[48px] h-[48px] rounded-2xl overflow-hidden shadow-md shrink-0 border border-[var(--color-border)]">
               <img src={logoUrl} alt="FinTrack Logo" className="w-full h-full object-cover" />
@@ -55,6 +71,13 @@ export function Sidebar() {
               <p className="text-sm text-[var(--color-text-tertiary)] leading-tight mt-1">Smart Finance</p>
             </div>
           </div>
+          {/* Mobile Close Button */}
+          <button
+            className="md:hidden p-2 rounded-xl text-[var(--color-text-tertiary)] bg-[var(--color-surface-tertiary)] hover:bg-[var(--color-border)] transition-colors"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <X size={20} />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -65,7 +88,7 @@ export function Sidebar() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => { setActiveTab(tab.id); setMobileMenuOpen(false); }}
                 className={`relative w-full flex items-center gap-[16px] px-[16px] py-[16px] rounded-[16px] text-left transition-all duration-200 ${
                   isActive
                     ? 'text-primary-600'
