@@ -20,7 +20,7 @@ function App() {
   }, [theme]);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[var(--color-surface-secondary)] relative w-full max-w-full p-3 sm:p-5 md:p-6 lg:p-8 gap-2 md:gap-3" style={{ border: '10px solid var(--color-app-border)' }}>
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[var(--color-surface-secondary)] relative w-full max-w-full p-3 sm:p-5 md:p-6 lg:p-8 gap-1 md:gap-1.5" style={{ border: '10px solid var(--color-app-border)' }}>
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between px-5 py-4 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] shrink-0 z-30 shadow-sm">
         <div className="flex items-center gap-3">
