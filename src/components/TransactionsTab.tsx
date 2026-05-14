@@ -247,7 +247,7 @@ export function TransactionsTab() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-6 md:space-y-8">
+      <div className="max-w-[1400px] mx-auto px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 lg:px-12 lg:py-10 space-y-8 md:space-y-10 pb-12">
 
         {/* ── Header Row ── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 md:gap-6">
@@ -268,8 +268,8 @@ export function TransactionsTab() {
         </div>
 
         {/* ── Month Selector & Summary Cards ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-6">
-          <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-3 md:p-5 flex flex-col items-center justify-center col-span-2 sm:col-span-1">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6">
+          <div className="bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-4 md:p-6 flex flex-col items-center justify-center col-span-2 sm:col-span-1">
             <div className="flex items-center gap-[12px]">
               <button onClick={prevMonth} className="p-2 rounded-lg hover:bg-[var(--color-surface-tertiary)] text-[var(--color-text-tertiary)] transition-colors"><ChevronLeft size={18} /></button>
               <div className="text-center min-w-[110px]">
@@ -287,7 +287,7 @@ export function TransactionsTab() {
             { label: 'Earnings', value: totalEarnings, color: 'text-emerald-500' },
             { label: 'Net Balance', value: netBalance, color: netBalance >= 0 ? 'text-emerald-500' : 'text-rose-500' },
           ].map((s) => (
-            <div key={s.label} className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-3 md:p-5 flex flex-col justify-center">
+            <div key={s.label} className="bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-4 md:p-6 flex flex-col justify-center">
               <p className="text-xs text-[var(--color-text-tertiary)] mb-1 md:mb-2">{s.label}</p>
               <p className={`text-lg md:text-xl font-bold ${s.color}`}>{formatCurrency(s.value)}</p>
             </div>
@@ -347,13 +347,13 @@ export function TransactionsTab() {
 
         {/* Content */}
         {view === 'list' ? (
-          <div className="space-y-2">
+          <div className="space-y-4">
             <AnimatePresence mode="popLayout">
               {transactions.map((tx) => {
                 const Icon = getIcon(tx.catIcon);
                 return (
                   <motion.div key={`${tx.type}-${tx.id}`} layout initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                    className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-3.5 flex items-center gap-3">
+                    className="bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-4 flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: tx.catColor + '18', color: tx.catColor }}>
                       <Icon size={18} />
                     </div>
@@ -395,7 +395,7 @@ export function TransactionsTab() {
           </div>
         ) : (
           /* Calendar View */
-          <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-4">
+          <div className="bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7">
             <div className="grid grid-cols-7 gap-1 mb-2">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
                 <div key={d} className="text-center text-xs font-medium text-[var(--color-text-tertiary)] py-2">{d}</div>

@@ -117,3 +117,6 @@ body {
   50% { opacity: 0.7; }
 }
 .pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

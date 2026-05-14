@@ -20,7 +20,7 @@ function SummaryCard({ icon: Icon, label, value, trend, trendLabel, color, delay
 }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay, duration: 0.4 }}
-      className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 card-hover">
+      className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 md:p-7 card-hover">
       <div className="flex items-start justify-between mb-3">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: color + '15', color }}>
           <Icon size={20} />
@@ -136,15 +136,15 @@ export function DashboardTab() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-6 md:space-y-8">
+      <div className="max-w-[1400px] mx-auto px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 lg:px-12 lg:py-10 space-y-8 md:space-y-10 pb-12">
         {/* Header */}
-        <div>
+        <div className="mb-6">
           <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Dashboard</h1>
           <p className="text-sm text-[var(--color-text-tertiary)] mt-1">Financial overview for {selectedYear}</p>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           <SummaryCard icon={Wallet} label="Total Balance" value={formatCurrency(totalSavings)} color="#3b82f6" delay={0} trend={totalSavings >= 0 ? 'up' : 'down'} trendLabel={totalEarnings > 0 ? `${Math.round((totalSavings / totalEarnings) * 100)}%` : '0%'} />
           <SummaryCard icon={TrendingUp} label="Total Earnings" value={formatCurrency(totalEarnings)} color="#10b981" delay={0.05} />
           <SummaryCard icon={TrendingDown} label="Total Expenses" value={formatCurrency(totalExpenses)} color="#f43f5e" delay={0.1} />
@@ -152,10 +152,10 @@ export function DashboardTab() {
         </div>
 
         {/* Charts Row 1 */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {/* Income vs Expense Bar */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className="lg:col-span-2 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-4 sm:p-6">
+            className="lg:col-span-2 bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7">
             <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Income vs Expenses</h3>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={monthlyData} barGap={4}>
@@ -171,7 +171,7 @@ export function DashboardTab() {
 
           {/* Category Pie */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-            className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-4 sm:p-6">
+            className="bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7">
             <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Expense Breakdown</h3>
             {categoryPieData.length > 0 ? (
               <>
@@ -202,10 +202,10 @@ export function DashboardTab() {
         </div>
 
         {/* Charts Row 2 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {/* Savings Trend */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-            className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-4 sm:p-6">
+            className="bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7">
             <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Savings Trend</h3>
             <ResponsiveContainer width="100%" height={220}>
               <AreaChart data={monthlyData}>
@@ -226,7 +226,7 @@ export function DashboardTab() {
 
           {/* Cash Flow */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
-            className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-4 sm:p-6">
+            className="bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7">
             <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Cash Flow</h3>
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={monthlyData}>
@@ -243,10 +243,10 @@ export function DashboardTab() {
         </div>
 
         {/* Bottom Row: Top Categories + Insights */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {/* Top Categories */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-            className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-4 sm:p-6">
+            className="bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7">
             <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Top Spending Categories</h3>
             {topCategories.length > 0 ? (
               <div className="space-y-[16px]">
@@ -279,7 +279,7 @@ export function DashboardTab() {
 
           {/* Smart Insights */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
-            className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-4 sm:p-6">
+            className="bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7">
             <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">💡 Smart Insights</h3>
             <div className="space-y-[12px]">
               {insights.map((tip, i) => {

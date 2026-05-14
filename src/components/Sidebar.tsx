@@ -56,7 +56,7 @@ export function Sidebar() {
 
       {/* Sidebar Container */}
       <div
-        className={`fixed md:relative inset-y-0 left-0 z-50 w-[280px] h-full max-h-screen flex flex-col bg-[var(--color-surface)] border-r border-[var(--color-border)] shrink-0 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed md:relative inset-y-0 left-0 z-50 w-[280px] h-full max-h-screen flex flex-col bg-[var(--color-surface)] border border-[var(--color-border)] md:rounded-3xl shrink-0 shadow-sm transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >

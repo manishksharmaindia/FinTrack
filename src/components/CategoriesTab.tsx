@@ -229,7 +229,7 @@ export function CategoriesTab() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-6 md:space-y-8">
+      <div className="max-w-[1400px] mx-auto px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 lg:px-12 lg:py-10 space-y-8 md:space-y-10 pb-12">
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Categories</h1>
@@ -265,7 +265,7 @@ export function CategoriesTab() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-7">
           <AnimatePresence mode="popLayout">
             {filtered.map((cat) => (
               <CategoryCard key={cat.id} cat={cat} type={activeSection}
