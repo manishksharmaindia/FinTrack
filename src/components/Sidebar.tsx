@@ -208,7 +208,7 @@ export function Sidebar() {
                   📤 Export Earnings
                 </button>
                 <button onClick={() => exportEmisCSV()}
-                  className="w-full text-left px-[16px] py-[10px] text-sm font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-tertiary)] rounded-xl transition-all font-bold text-primary-500">
+                  className="w-full text-left px-[16px] py-[10px] text-sm font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-tertiary)] rounded-xl transition-all">
                   📤 Export EMI Summary
                 </button>
                 <div className="h-px bg-[var(--color-border)] my-1" />
@@ -221,7 +221,7 @@ export function Sidebar() {
                   📥 Import Earnings
                 </button>
                 <button onClick={() => handleImport('emi')}
-                  className="w-full text-left px-[16px] py-[10px] text-sm font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-tertiary)] rounded-xl transition-all font-bold text-primary-500">
+                  className="w-full text-left px-[16px] py-[10px] text-sm font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-tertiary)] rounded-xl transition-all">
                   📥 Import EMI CSV
                 </button>
               </motion.div>
