@@ -44,7 +44,7 @@ function ExpenseForm({ editId, onClose }: { editId: number | null; onClose: () =
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Date</label>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
@@ -126,7 +126,7 @@ function EarningForm({ editId, onClose }: { editId: number | null; onClose: () =
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Date</label>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
@@ -278,7 +278,7 @@ export function TransactionsTab() {
         </div>
 
         {/* ── Month Selector & Summary Cards ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           <div className="bg-[var(--color-surface-secondary)] rounded-2xl border border-[var(--color-border)] p-4 md:p-6 flex flex-col items-center justify-center col-span-2 sm:col-span-1">
             <div className="flex items-center gap-[12px]">
               <button onClick={prevMonth} className="p-2 rounded-lg hover:bg-[var(--color-surface-tertiary)] text-[var(--color-text-tertiary)] transition-colors"><ChevronLeft size={18} /></button>
