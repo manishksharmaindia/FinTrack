@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Calendar, ArrowUpRight, ArrowDownRight, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import { Search, Filter, Calendar, ArrowUpRight, ArrowDownRight, ChevronLeft, ChevronRight, Trash2, Pencil } from 'lucide-react';
 import { db, type Expense, type Earning } from '../db';
 import { useAppStore } from '../store';
 import { getIcon, formatCurrency, formatDate, paymentMethods, months, years } from '../utils';
@@ -225,6 +225,16 @@ export function TransactionsTab() {
     }
   };
 
+  const handleEdit = (item: TxItem) => {
+    if (item.type === 'expense') {
+      store.setEditingExpense(item.id);
+      store.setShowAddExpenseModal(true);
+    } else {
+      store.setEditingEarning(item.id);
+      store.setShowAddEarningModal(true);
+    }
+  };
+
   const prevMonth = () => {
     if (selectedMonth === 0) { store.setSelectedMonth(11); store.setSelectedYear(selectedYear - 1); }
     else store.setSelectedMonth(selectedMonth - 1);
@@ -367,21 +377,30 @@ export function TransactionsTab() {
                     <p className={`text-sm font-semibold shrink-0 ${tx.type === 'expense' ? 'text-rose-500' : 'text-emerald-500'}`}>
                       {tx.type === 'expense' ? '-' : '+'}{formatCurrency(tx.amount)}
                     </p>
-                    <button
-                      onClick={(e) => handleDelete(e, tx)}
-                      title={confirmDeleteId === `${tx.type}-${tx.id}` ? 'Click again to confirm delete' : 'Delete this transaction'}
-                      className={`relative z-10 shrink-0 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
-                        confirmDeleteId === `${tx.type}-${tx.id}`
-                          ? 'bg-rose-500 text-white shadow-md hover:bg-rose-600'
-                          : 'bg-rose-50 text-rose-400 hover:bg-rose-100 hover:text-rose-600'
-                      }`}
-                    >
-                      {confirmDeleteId === `${tx.type}-${tx.id}` ? (
-                        <span className="flex items-center gap-1.5"><Trash2 size={14} /> Delete?</span>
-                      ) : (
-                        <Trash2 size={16} />
-                      )}
-                    </button>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => handleEdit(tx)}
+                        title="Edit this transaction"
+                        className="p-1.5 rounded-lg bg-primary-50 text-primary-600 hover:bg-primary-100 hover:text-primary-700 transition-colors"
+                      >
+                        <Pencil size={14} />
+                      </button>
+                      <button
+                        onClick={(e) => handleDelete(e, tx)}
+                        title={confirmDeleteId === `${tx.type}-${tx.id}` ? 'Click again to confirm delete' : 'Delete this transaction'}
+                        className={`relative z-10 shrink-0 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+                          confirmDeleteId === `${tx.type}-${tx.id}`
+                            ? 'bg-rose-500 text-white shadow-md hover:bg-rose-600'
+                            : 'bg-rose-50 text-rose-400 hover:bg-rose-100 hover:text-rose-600'
+                        }`}
+                      >
+                        {confirmDeleteId === `${tx.type}-${tx.id}` ? (
+                          <span className="flex items-center gap-1.5"><Trash2 size={14} /> Delete?</span>
+                        ) : (
+                          <Trash2 size={16} />
+                        )}
+                      </button>
+                    </div>
                   </motion.div>
                 );
               })}

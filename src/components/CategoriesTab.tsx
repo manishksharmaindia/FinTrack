@@ -44,14 +44,14 @@ function CategoryCard({ cat, type, onEdit, onDelete }: {
             )}
           </div>
         </div>
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button onClick={onEdit} className="p-1.5 rounded-lg hover:bg-[var(--color-surface-tertiary)] text-[var(--color-text-tertiary)] hover:text-primary-500 transition-colors">
-            <Pencil size={14} />
-          </button>
-          <button onClick={onDelete} className="p-1.5 rounded-lg hover:bg-rose-50 text-[var(--color-text-tertiary)] hover:text-rose-500 transition-colors">
-            <Trash2 size={14} />
-          </button>
-        </div>
+          <div className="flex gap-1 transition-opacity">
+            <button onClick={onEdit} className="p-1.5 rounded-lg hover:bg-[var(--color-surface-tertiary)] text-[var(--color-text-tertiary)] hover:text-primary-500 transition-colors" title="Edit">
+              <Pencil size={14} />
+            </button>
+            <button onClick={onDelete} className="p-1.5 rounded-lg hover:bg-rose-50 text-[var(--color-text-tertiary)] hover:text-rose-500 transition-colors" title="Delete">
+              <Trash2 size={14} />
+            </button>
+          </div>
       </div>
     </motion.div>
   );
@@ -201,11 +201,20 @@ export function CategoriesTab() {
   const filtered = categories.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()));
 
   const handleDelete = async (id: number) => {
-    if (confirm('Delete this category?')) {
-      if (activeSection === 'expense') await db.expenseCategories.delete(id);
-      else await db.earningCategories.delete(id);
+    console.log('Delete button clicked for id:', id);
+    if (activeSection === 'expense') {
+      await db.expenseCategories.delete(id);
+      console.log('Expense category deleted');
+      const remaining = await db.expenseCategories.toArray();
+      console.log('Remaining expense categories:', remaining.map(c => c.id));
+    } else {
+      await db.earningCategories.delete(id);
+      console.log('Earning category deleted');
+      const remaining = await db.earningCategories.toArray();
+      console.log('Remaining earning categories:', remaining.map(c => c.id));
     }
   };
+
 
   const handleEdit = (id: number) => {
     if (activeSection === 'expense') {
