@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { LayoutGrid, Receipt, BarChart3, Sun, Moon, Download, RotateCcw, Plus, Minus, X } from 'lucide-react';
+import { LayoutGrid, Receipt, BarChart3, Sun, Moon, Download, RotateCcw, Plus, Minus, X, BookOpen, HardDrive, Mail, CheckCircle2, Loader2 } from 'lucide-react';
 import { useAppStore } from '../store';
-import { exportExpensesCSV, exportEarningsCSV, importCSV, resetDatabase } from '../exportUtils';
+import { exportExpensesCSV, exportEarningsCSV, importCSV, resetDatabase, generateExpensesBlob, generateEarningsBlob, generateExpensesCSVString, generateEarningsCSVString } from '../exportUtils';
+import { saveAs } from 'file-saver';
+import { HelpDoc } from './HelpDoc';
 import logoUrl from '../assets/logo.png';
 
 const tabs = [
@@ -17,6 +19,66 @@ export function Sidebar() {
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetPassword, setResetPassword] = useState('');
   const [resetError, setResetError] = useState('');
+  const [showHelp, setShowHelp] = useState(false);
+  const [showBackupModal, setShowBackupModal] = useState(false);
+  const [backupEmail, setBackupEmail] = useState('');
+  const [backupLoading, setBackupLoading] = useState(false);
+  const [backupDone, setBackupDone] = useState(false);
+  const [backupError, setBackupError] = useState('');
+
+  const handleBackupToEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!backupEmail || !backupEmail.includes('@')) {
+      setBackupError('Please enter a valid email address');
+      return;
+    }
+    setBackupLoading(true);
+    setBackupError('');
+    try {
+      // Generate and download the CSV files
+      const expResult = await generateExpensesBlob();
+      const earnResult = await generateEarningsBlob();
+      saveAs(expResult.blob, expResult.filename);
+      // Small delay so browser doesn't block second download
+      await new Promise(r => setTimeout(r, 500));
+      saveAs(earnResult.blob, earnResult.filename);
+
+      // Generate CSV strings for body embedding
+      const expStr = await generateExpensesCSVString();
+      const earnStr = await generateEarningsCSVString();
+
+      // Build mailto link
+      const today = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+      const subject = encodeURIComponent(`FinTrack Backup - ${today}`);
+      
+      // We embed the CSV data directly in the body as a fallback/primary source 
+      // since mailto cannot attach files automatically.
+      const body = encodeURIComponent(
+        `Hi,\n\nPlease find the FinTrack application backup for ${today} below.\n\n` +
+        `--- EXPENSES DATA (${expStr.count} records) ---\n${expStr.csv}\n\n` +
+        `--- EARNINGS DATA (${earnStr.count} records) ---\n${earnStr.csv}\n\n` +
+        `NOTE: We have also downloaded these files to your computer. Please attach them to this email if you need a standard backup file.\n\n` +
+        `Thanks,\nFinTrack Team`
+      );
+      const mailtoLink = `mailto:${backupEmail}?subject=${subject}&body=${body}`;
+
+      // Small delay then open mail client
+      await new Promise(r => setTimeout(r, 300));
+      window.open(mailtoLink, '_blank');
+
+      setBackupDone(true);
+      setTimeout(() => {
+        setBackupDone(false);
+        setShowBackupModal(false);
+        setBackupEmail('');
+      }, 4000);
+    } catch (err) {
+      setBackupError('Failed to generate backup. Please try again.');
+      console.error(err);
+    } finally {
+      setBackupLoading(false);
+    }
+  };
 
   const handleImport = async (type: 'expense' | 'earning') => {
     const input = document.createElement('input');
@@ -156,6 +218,24 @@ export function Sidebar() {
         {/* Bottom controls */}
         <div className="border-t border-[var(--color-border)]">
           <div className="px-[20px] py-[24px] flex flex-col gap-[12px]">
+            {/* Backup to Email */}
+            <button
+              onClick={() => { setShowBackupModal(true); setBackupDone(false); setBackupError(''); }}
+              className="w-full flex items-center gap-[16px] px-[16px] py-[16px] rounded-[16px] text-[var(--color-text-secondary)] hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all font-semibold"
+            >
+              <HardDrive size={22} className="shrink-0" />
+              <span className="text-sm">Backup to Email</span>
+            </button>
+
+            {/* Documentation Link */}
+            <button
+              onClick={() => setShowHelp(true)}
+              className="w-full flex items-center gap-[16px] px-[16px] py-[16px] rounded-[16px] text-[var(--color-text-secondary)] hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-all font-semibold"
+            >
+              <BookOpen size={22} className="shrink-0" />
+              <span className="text-sm">Documentation</span>
+            </button>
+
             {/* Signature */}
             <div className="px-[16px] pb-[8px]">
               <p className="text-[11px] font-medium text-[var(--color-text-tertiary)] leading-tight">App Created By:</p>
@@ -246,6 +326,91 @@ export function Sidebar() {
                 </button>
               </div>
             </form>
+          </motion.div>
+        </div>
+      )}
+      {/* Help Documentation Modal */}
+      {showHelp && <HelpDoc onClose={() => setShowHelp(false)} />}
+
+      {/* Backup to Email Modal */}
+      {showBackupModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-[var(--color-surface)] border border-[var(--color-border)] p-6 rounded-md w-full max-w-sm shadow-2xl"
+          >
+            {backupDone ? (
+              <div className="text-center py-4">
+                <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 size={32} className="text-emerald-500" />
+                </div>
+                <h2 className="text-lg font-bold text-[var(--color-text-primary)] mb-2">Backup Ready!</h2>
+                <p className="text-sm text-[var(--color-text-secondary)]">
+                  CSV files downloaded. Your email client is opening — please <strong>attach the downloaded files</strong> before sending.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+                    <HardDrive size={24} className="text-emerald-500" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-[var(--color-text-primary)]">Backup to Email</h2>
+                    <p className="text-xs text-[var(--color-text-tertiary)]">Export & email your financial data</p>
+                  </div>
+                </div>
+
+                <div className="bg-[var(--color-surface-secondary)] rounded-md border border-[var(--color-border)] p-3 mb-5">
+                  <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
+                    <Mail size={12} className="inline mr-1.5 text-primary-500" />
+                    This will <strong>download</strong> your Expenses & Earnings CSV files and <strong>open your email client</strong> with a pre-filled email.
+                    Simply <strong>attach the downloaded files</strong> and hit send.
+                  </p>
+                </div>
+
+                <form onSubmit={handleBackupToEmail}>
+                  <div className="mb-5">
+                    <label className="block text-xs font-bold text-[var(--color-text-tertiary)] mb-2 uppercase tracking-wider">
+                      Your Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={backupEmail}
+                      onChange={(e) => { setBackupEmail(e.target.value); setBackupError(''); }}
+                      className="w-full px-4 py-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+                      placeholder="your@email.com"
+                      autoFocus
+                    />
+                    {backupError && (
+                      <p className="text-sm text-rose-500 mt-2 font-medium">{backupError}</p>
+                    )}
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => { setShowBackupModal(false); setBackupEmail(''); setBackupError(''); }}
+                      className="flex-1 py-3 px-4 rounded-md font-semibold text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-tertiary)] transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={backupLoading}
+                      className="flex-1 py-3 px-4 rounded-md font-bold bg-emerald-500 text-white hover:bg-emerald-600 shadow-md shadow-emerald-500/20 transition-all active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2"
+                    >
+                      {backupLoading ? (
+                        <><Loader2 size={16} className="animate-spin" /> Generating...</>
+                      ) : (
+                        <><HardDrive size={16} /> Backup Now</>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
           </motion.div>
         </div>
       )}
