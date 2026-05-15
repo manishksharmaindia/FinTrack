@@ -261,7 +261,7 @@ export function TransactionsTab() {
 
         {/* ── Header Row ── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 md:gap-6">
-          <div className="shrink-0">
+          <div className="shrink-0 text-center w-full">
             <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Transactions</h1>
             <p className="text-sm text-[var(--color-text-tertiary)] mt-1">Record and manage your finances</p>
           </div>

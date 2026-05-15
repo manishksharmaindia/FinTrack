@@ -138,7 +138,7 @@ export function DashboardTab() {
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-[1400px] mx-auto px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 lg:px-12 lg:py-10 space-y-8 md:space-y-10 pb-12">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Dashboard</h1>
           <p className="text-sm text-[var(--color-text-tertiary)] mt-1">Financial overview for {selectedYear}</p>
         </div>

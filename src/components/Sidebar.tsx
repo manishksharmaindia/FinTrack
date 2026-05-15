@@ -56,7 +56,7 @@ export function Sidebar() {
 
       {/* Sidebar Container */}
       <div
-        className={`fixed md:relative inset-y-0 left-0 z-50 w-[280px] h-full max-h-screen flex flex-col bg-[var(--color-surface)] border border-[var(--color-border)] md:rounded-3xl shrink-0 shadow-sm transform transition-transform duration-300 ease-in-out ${
+        className={`fixed md:relative inset-y-0 left-0 z-50 w-[280px] h-full max-h-screen flex flex-col bg-[var(--color-surface)] border border-[var(--color-border)] md:rounded-md shrink-0 shadow-sm transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
@@ -189,7 +189,7 @@ export function Sidebar() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-[var(--color-surface)] border border-[var(--color-border)] p-6 rounded-3xl w-full max-w-sm shadow-2xl"
+            className="bg-[var(--color-surface)] border border-[var(--color-border)] p-6 rounded-md w-full max-w-sm shadow-2xl"
           >
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center shrink-0">

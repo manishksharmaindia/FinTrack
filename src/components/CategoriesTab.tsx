@@ -240,7 +240,7 @@ export function CategoriesTab() {
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-[1400px] mx-auto px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 lg:px-12 lg:py-10 space-y-8 md:space-y-10 pb-12">
         {/* Header */}
-        <div>
+        <div className="text-center">
           <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Categories</h1>
           <p className="text-sm text-[var(--color-text-tertiary)] mt-1">Manage your expense and earning types</p>
         </div>
