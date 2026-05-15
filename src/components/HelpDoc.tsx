@@ -103,6 +103,23 @@ export function HelpDoc({ onClose }: HelpDocProps) {
                   <li><strong>Year Selector</strong> — switch between years (2026–2050) from the sidebar</li>
                 </ul>
               </div>
+
+              <div className="bg-[var(--color-surface-secondary)] rounded-md border border-[var(--color-border)] p-4 border-l-4 border-l-primary-500">
+                <h4 className="font-semibold text-[var(--color-text-primary)] mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center text-xs font-bold">5</span>
+                  EMI Tracker Tab (Special Note)
+                </h4>
+                <ul className="space-y-2 ml-8 list-disc marker:text-[var(--color-text-tertiary)]">
+                  <li className="text-rose-500 font-semibold italic">IMPORTANT: Any values or amounts added in this EMI tab do NOT reflect in the Dashboard tab calculations. This tab is completely separate for your loan tracking.</li>
+                  <li><strong>How to show EMI in Dashboard:</strong> If you want your EMI numbers to be included in the main Dashboard analytics, you must:
+                    <ul className="mt-2 ml-4 space-y-1 list-[circle] opacity-80">
+                      <li>Add the <strong>Total Loan Amount</strong> as an <strong>Earning</strong> in the Transactions tab when you receive it.</li>
+                      <li>Add your <strong>Monthly EMI Payments</strong> as <strong>Expenses</strong> in the Transactions tab each month.</li>
+                    </ul>
+                  </li>
+                  <li>By following the steps above, your Dashboard will correctly reflect your actual cash flow and financial health.</li>
+                </ul>
+              </div>
             </div>
           </section>
 
@@ -422,7 +439,10 @@ export function HelpDoc({ onClose }: HelpDocProps) {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-[var(--color-border)] shrink-0 flex items-center justify-between">
-          <p className="text-xs text-[var(--color-text-tertiary)]">FinTrack v1.0 — Built with React, Dexie.js & IndexedDB</p>
+          <div className="flex flex-col">
+            <p className="text-xs text-[var(--color-text-tertiary)]">FinTrack v1.1 — Built with React, Dexie.js & IndexedDB</p>
+            <p className="text-[10px] text-primary-500 font-medium mt-0.5">📧 For help, contact: manishksharma.india@gmail.com</p>
+          </div>
           <button
             onClick={onClose}
             className="px-5 py-2 rounded-md bg-primary-500 text-white text-sm font-semibold hover:bg-primary-600 transition-colors shadow-sm"
