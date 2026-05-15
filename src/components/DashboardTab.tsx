@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { motion } from 'framer-motion';
 import {
   Wallet, TrendingUp, TrendingDown, PiggyBank, Target, AlertTriangle,
-  ArrowUpRight, ArrowDownRight, Lightbulb, BarChart3
+  ArrowUpRight, ArrowDownRight, Lightbulb, BarChart3, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import {
   PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 import { db } from '../db';
 import { useAppStore } from '../store';
-import { formatCurrency, months, getIcon } from '../utils';
+import { formatCurrency, months, years, getIcon } from '../utils';
 
 
 
@@ -38,33 +38,79 @@ function SummaryCard({ icon: Icon, label, value, trend, trendLabel, color, delay
   );
 }
 
+type FilterMode = 'monthly' | 'quarterly' | 'yearly' | 'all';
+const quarterLabels = ['Q1 (Jan–Mar)', 'Q2 (Apr–Jun)', 'Q3 (Jul–Sep)', 'Q4 (Oct–Dec)'];
+
 export function DashboardTab() {
-  const { selectedYear } = useAppStore();
+  const { selectedYear, setSelectedYear } = useAppStore();
+  const [filterMode, setFilterMode] = useState<FilterMode>('yearly');
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedQuarter, setSelectedQuarter] = useState(Math.floor(new Date().getMonth() / 3));
 
   const allExpenses = useLiveQuery(() => db.expenses.toArray()) || [];
   const allEarnings = useLiveQuery(() => db.earnings.toArray()) || [];
   const expCats = useLiveQuery(() => db.expenseCategories.toArray()) || [];
 
-
   const expCatMap = useMemo(() => Object.fromEntries(expCats.map((c) => [c.id, c])), [expCats]);
 
-  // Year filter
-  const yearExpenses = useMemo(() => allExpenses.filter((e) => new Date(e.date).getFullYear() === selectedYear), [allExpenses, selectedYear]);
-  const yearEarnings = useMemo(() => allEarnings.filter((e) => new Date(e.date).getFullYear() === selectedYear), [allEarnings, selectedYear]);
+  // Filtered data based on selected mode
+  const { filteredExpenses: yearExpenses, filteredEarnings: yearEarnings } = useMemo(() => {
+    let fExp = allExpenses;
+    let fEarn = allEarnings;
+    if (filterMode !== 'all') {
+      fExp = fExp.filter((e) => new Date(e.date).getFullYear() === selectedYear);
+      fEarn = fEarn.filter((e) => new Date(e.date).getFullYear() === selectedYear);
+    }
+    if (filterMode === 'monthly') {
+      fExp = fExp.filter((e) => new Date(e.date).getMonth() === selectedMonth);
+      fEarn = fEarn.filter((e) => new Date(e.date).getMonth() === selectedMonth);
+    } else if (filterMode === 'quarterly') {
+      const qStart = selectedQuarter * 3;
+      fExp = fExp.filter((e) => { const m = new Date(e.date).getMonth(); return m >= qStart && m < qStart + 3; });
+      fEarn = fEarn.filter((e) => { const m = new Date(e.date).getMonth(); return m >= qStart && m < qStart + 3; });
+    }
+    return { filteredExpenses: fExp, filteredEarnings: fEarn };
+  }, [allExpenses, allEarnings, selectedYear, filterMode, selectedMonth, selectedQuarter]);
 
   const totalExpenses = yearExpenses.reduce((s, e) => s + e.amount, 0);
   const totalEarnings = yearEarnings.reduce((s, e) => s + e.amount, 0);
   const totalSavings = totalEarnings - totalExpenses;
-  const totalBudget = expCats.reduce((s, c) => s + (c.monthlyBudget || 0), 0) * 12;
+  const budgetMultiplier = filterMode === 'monthly' ? 1 : filterMode === 'quarterly' ? 3 : 12;
+  const totalBudget = expCats.reduce((s, c) => s + (c.monthlyBudget || 0), 0) * budgetMultiplier;
+
+  // Label for current filter
+  const filterLabel = filterMode === 'monthly' ? `${months[selectedMonth]} ${selectedYear}`
+    : filterMode === 'quarterly' ? `${quarterLabels[selectedQuarter]} ${selectedYear}`
+    : filterMode === 'yearly' ? `${selectedYear}` : 'All Time';
 
   // Monthly breakdown for charts
   const monthlyData = useMemo(() => {
-    return months.map((name, i) => {
-      const mExp = yearExpenses.filter((e) => new Date(e.date).getMonth() === i).reduce((s, e) => s + e.amount, 0);
-      const mEarn = yearEarnings.filter((e) => new Date(e.date).getMonth() === i).reduce((s, e) => s + e.amount, 0);
-      return { name: name.slice(0, 3), expenses: mExp, earnings: mEarn, savings: mEarn - mExp };
-    });
-  }, [yearExpenses, yearEarnings]);
+    if (filterMode === 'monthly') {
+      // Show daily breakdown for the selected month
+      const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+      return Array.from({ length: daysInMonth }, (_, i) => {
+        const day = i + 1;
+        const dayStr = String(day);
+        const mExp = yearExpenses.filter((e) => new Date(e.date).getDate() === day).reduce((s, e) => s + e.amount, 0);
+        const mEarn = yearEarnings.filter((e) => new Date(e.date).getDate() === day).reduce((s, e) => s + e.amount, 0);
+        return { name: dayStr, expenses: mExp, earnings: mEarn, savings: mEarn - mExp };
+      });
+    } else if (filterMode === 'quarterly') {
+      const qStart = selectedQuarter * 3;
+      return [0, 1, 2].map((offset) => {
+        const mi = qStart + offset;
+        const mExp = yearExpenses.filter((e) => new Date(e.date).getMonth() === mi).reduce((s, e) => s + e.amount, 0);
+        const mEarn = yearEarnings.filter((e) => new Date(e.date).getMonth() === mi).reduce((s, e) => s + e.amount, 0);
+        return { name: months[mi].slice(0, 3), expenses: mExp, earnings: mEarn, savings: mEarn - mExp };
+      });
+    } else {
+      return months.map((name, i) => {
+        const mExp = yearExpenses.filter((e) => new Date(e.date).getMonth() === i).reduce((s, e) => s + e.amount, 0);
+        const mEarn = yearEarnings.filter((e) => new Date(e.date).getMonth() === i).reduce((s, e) => s + e.amount, 0);
+        return { name: name.slice(0, 3), expenses: mExp, earnings: mEarn, savings: mEarn - mExp };
+      });
+    }
+  }, [yearExpenses, yearEarnings, filterMode, selectedYear, selectedMonth, selectedQuarter]);
 
   // Category pie data
   const categoryPieData = useMemo(() => {
@@ -137,10 +183,63 @@ export function DashboardTab() {
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-[1400px] mx-auto px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 lg:px-12 lg:py-10 space-y-8 md:space-y-10 pb-12">
-        {/* Header */}
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Dashboard</h1>
-          <p className="text-sm text-[var(--color-text-tertiary)] mt-1">Financial overview for {selectedYear}</p>
+        {/* Header + Filter Bar */}
+        <div className="mb-6">
+          <div className="text-center mb-5">
+            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Dashboard</h1>
+            <p className="text-sm text-[var(--color-text-tertiary)] mt-1">Financial overview — {filterLabel}</p>
+          </div>
+
+          {/* Filter Controls */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 flex-wrap">
+            {/* Mode Tabs */}
+            <div className="flex items-center bg-[var(--color-surface-secondary)] rounded-xl border border-[var(--color-border)] p-1 gap-1">
+              {(['monthly', 'quarterly', 'yearly', 'all'] as FilterMode[]).map((mode) => (
+                <button key={mode} onClick={() => setFilterMode(mode)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all capitalize ${
+                    filterMode === mode
+                      ? 'bg-primary-500 text-white shadow-sm'
+                      : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-tertiary)]'
+                  }`}>
+                  {mode === 'all' ? 'All Time' : mode}
+                </button>
+              ))}
+            </div>
+
+            {/* Year Selector (hidden for 'all') */}
+            {filterMode !== 'all' && (
+              <div className="flex items-center gap-2">
+                <button onClick={() => setSelectedYear(selectedYear - 1)}
+                  className="p-1.5 rounded-lg text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-tertiary)] transition-colors">
+                  <ChevronLeft size={16} />
+                </button>
+                <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}
+                  className="bg-[var(--color-surface-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-1.5 text-xs font-semibold text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30">
+                  {years.map((y) => <option key={y} value={y}>{y}</option>)}
+                </select>
+                <button onClick={() => setSelectedYear(selectedYear + 1)}
+                  className="p-1.5 rounded-lg text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-tertiary)] transition-colors">
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
+
+            {/* Month Selector */}
+            {filterMode === 'monthly' && (
+              <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                className="bg-[var(--color-surface-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-1.5 text-xs font-semibold text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30">
+                {months.map((m, i) => <option key={i} value={i}>{m}</option>)}
+              </select>
+            )}
+
+            {/* Quarter Selector */}
+            {filterMode === 'quarterly' && (
+              <select value={selectedQuarter} onChange={(e) => setSelectedQuarter(Number(e.target.value))}
+                className="bg-[var(--color-surface-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-1.5 text-xs font-semibold text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30">
+                {quarterLabels.map((q, i) => <option key={i} value={i}>{q}</option>)}
+              </select>
+            )}
+          </div>
         </div>
 
         {/* Summary Cards */}
