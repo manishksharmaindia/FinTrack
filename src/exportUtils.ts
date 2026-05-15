@@ -125,6 +125,13 @@ export async function generateEarningsCSVString(year?: number): Promise<{ csv: s
   return { csv, count: data.length };
 }
 
+// Default colors to assign to newly-created categories during import
+const IMPORT_CATEGORY_COLORS = [
+  '#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#8b5cf6',
+  '#ec4899', '#06b6d4', '#f97316', '#22c55e', '#6366f1',
+  '#14b8a6', '#a855f7', '#0ea5e9', '#f43f5e', '#64748b',
+];
+
 export async function importCSV(file: File, type: 'expense' | 'earning'): Promise<number> {
   return new Promise((resolve, reject) => {
     Papa.parse(file, {
@@ -132,12 +139,43 @@ export async function importCSV(file: File, type: 'expense' | 'earning'): Promis
       complete: async (results) => {
         try {
           let count = 0;
+
           if (type === 'expense') {
-            const cats = await db.expenseCategories.toArray();
-            const catNameMap = Object.fromEntries(cats.map((c) => [c.name.toLowerCase(), c.id]));
+            // --- Step 1: Collect all unique category names from the CSV ---
+            const csvCategoryNames = new Set<string>();
+            for (const row of results.data as any[]) {
+              if (row.Category && row.Category.trim()) {
+                csvCategoryNames.add(row.Category.trim());
+              }
+            }
+
+            // --- Step 2: Create any missing categories ---
+            const existingCats = await db.expenseCategories.toArray();
+            const catNameMap: Record<string, number> = {};
+            for (const c of existingCats) {
+              catNameMap[c.name.toLowerCase()] = c.id!;
+            }
+
+            let colorIndex = existingCats.length;
+            for (const catName of csvCategoryNames) {
+              if (!catNameMap[catName.toLowerCase()]) {
+                const newId = await db.expenseCategories.add({
+                  name: catName,
+                  icon: 'Tag',
+                  color: IMPORT_CATEGORY_COLORS[colorIndex % IMPORT_CATEGORY_COLORS.length],
+                  monthlyBudget: 0,
+                  isDefault: false,
+                  createdAt: new Date().toISOString(),
+                });
+                catNameMap[catName.toLowerCase()] = newId as number;
+                colorIndex++;
+              }
+            }
+
+            // --- Step 3: Import transactions with correct category IDs ---
             for (const row of results.data as any[]) {
               if (!row.Date || !row.Amount) continue;
-              const categoryId = catNameMap[row.Category?.toLowerCase()] || cats[0]?.id;
+              const categoryId = catNameMap[row.Category?.trim().toLowerCase()];
               if (!categoryId) continue;
               await db.expenses.add({
                 date: row.Date,
@@ -152,11 +190,43 @@ export async function importCSV(file: File, type: 'expense' | 'earning'): Promis
               count++;
             }
           } else {
-            const cats = await db.earningCategories.toArray();
-            const catNameMap = Object.fromEntries(cats.map((c) => [c.name.toLowerCase(), c.id]));
+            // --- Step 1: Collect all unique category names from the CSV ---
+            const csvCategoryNames = new Set<string>();
+            for (const row of results.data as any[]) {
+              if (row.Category && row.Category.trim()) {
+                csvCategoryNames.add(row.Category.trim());
+              }
+            }
+
+            // --- Step 2: Create any missing categories ---
+            const existingCats = await db.earningCategories.toArray();
+            const catNameMap: Record<string, number> = {};
+            for (const c of existingCats) {
+              catNameMap[c.name.toLowerCase()] = c.id!;
+            }
+
+            let colorIndex = existingCats.length;
+            for (const catName of csvCategoryNames) {
+              if (!catNameMap[catName.toLowerCase()]) {
+                const newId = await db.earningCategories.add({
+                  name: catName,
+                  icon: 'Tag',
+                  color: IMPORT_CATEGORY_COLORS[colorIndex % IMPORT_CATEGORY_COLORS.length],
+                  isRecurring: false,
+                  recurringAmount: 0,
+                  recurringFrequency: 'none',
+                  isDefault: false,
+                  createdAt: new Date().toISOString(),
+                });
+                catNameMap[catName.toLowerCase()] = newId as number;
+                colorIndex++;
+              }
+            }
+
+            // --- Step 3: Import transactions with correct category IDs ---
             for (const row of results.data as any[]) {
               if (!row.Date || !row.Amount) continue;
-              const categoryId = catNameMap[row.Category?.toLowerCase()] || cats[0]?.id;
+              const categoryId = catNameMap[row.Category?.trim().toLowerCase()];
               if (!categoryId) continue;
               await db.earnings.add({
                 date: row.Date,
