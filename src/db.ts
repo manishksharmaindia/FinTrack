@@ -46,6 +46,20 @@ export interface Earning {
   createdAt: string;
 }
 
+export interface EmiEntry {
+  id?: number;
+  name: string;
+  lender: string;
+  totalAmount: number;
+  emiAmount: number;
+  interestRate: number;
+  totalEmis: number;
+  emisPaid: number;
+  startDate: string;
+  notes: string;
+  createdAt: string;
+}
+
 export interface Budget {
   id?: number;
   year: number;
@@ -69,6 +83,7 @@ class FinanceDB extends Dexie {
   earnings!: Table<Earning>;
   budgets!: Table<Budget>;
   userProfiles!: Table<UserProfile>;
+  emiEntries!: Table<EmiEntry>;
 
   constructor() {
     super('SmartExpenseManager');
@@ -79,6 +94,15 @@ class FinanceDB extends Dexie {
       earnings: '++id, date, categoryId, amount',
       budgets: '++id, year, month, [year+month]',
       userProfiles: '++id, name',
+    });
+    this.version(2).stores({
+      expenseCategories: '++id, name, createdAt',
+      earningCategories: '++id, name, createdAt',
+      expenses: '++id, date, categoryId, paymentMethod, amount',
+      earnings: '++id, date, categoryId, amount',
+      budgets: '++id, year, month, [year+month]',
+      userProfiles: '++id, name',
+      emiEntries: '++id, name, startDate, createdAt',
     });
   }
 }

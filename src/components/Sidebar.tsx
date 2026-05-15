@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { LayoutGrid, Receipt, BarChart3, Sun, Moon, Download, RotateCcw, Plus, Minus, X, BookOpen, HardDrive, Mail, CheckCircle2, Loader2 } from 'lucide-react';
+import { LayoutGrid, Receipt, BarChart3, Sun, Moon, Download, RotateCcw, Plus, Minus, X, BookOpen, HardDrive, Mail, CheckCircle2, Loader2, CreditCard } from 'lucide-react';
 import { useAppStore } from '../store';
 import { exportExpensesCSV, exportEarningsCSV, importCSV, resetDatabase, generateExpensesBlob, generateEarningsBlob, generateExpensesCSVString, generateEarningsCSVString } from '../exportUtils';
 import { saveAs } from 'file-saver';
@@ -10,7 +10,8 @@ import logoUrl from '../assets/logo.png';
 const tabs = [
   { id: 0, label: 'Categories', icon: LayoutGrid, desc: 'Manage Types' },
   { id: 1, label: 'Transactions', icon: Receipt, desc: 'Monthly Entry' },
-  { id: 2, label: 'Dashboard', icon: BarChart3, desc: 'Analytics' },
+  { id: 2, label: 'EMI Tracker', icon: CreditCard, desc: 'Loan EMIs' },
+  { id: 3, label: 'Dashboard', icon: BarChart3, desc: 'Analytics' },
 ];
 
 export function Sidebar() {

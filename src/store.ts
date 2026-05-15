@@ -36,7 +36,7 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  activeTab: 2,
+  activeTab: 3,
   setActiveTab: (tab) => set({ activeTab: tab }),
   theme: (localStorage.getItem('theme') as 'light' | 'dark') || 'light',
   toggleTheme: () =>

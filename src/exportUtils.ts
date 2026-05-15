@@ -252,13 +252,14 @@ export async function importCSV(file: File, type: 'expense' | 'earning'): Promis
 
 export async function resetDatabase() {
   try {
-    await db.transaction('rw', [db.expenses, db.earnings, db.expenseCategories, db.earningCategories, db.budgets, db.userProfiles], async () => {
+    await db.transaction('rw', [db.expenses, db.earnings, db.expenseCategories, db.earningCategories, db.budgets, db.userProfiles, db.emiEntries], async () => {
       await db.expenses.clear();
       await db.earnings.clear();
       await db.expenseCategories.clear();
       await db.earningCategories.clear();
       await db.budgets.clear();
       await db.userProfiles.clear();
+      await db.emiEntries.clear();
     });
     window.location.reload();
   } catch (error) {

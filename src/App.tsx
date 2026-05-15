@@ -6,6 +6,7 @@ import { Sidebar } from './components/Sidebar';
 import { CategoriesTab } from './components/CategoriesTab';
 import { TransactionsTab } from './components/TransactionsTab';
 import { DashboardTab } from './components/DashboardTab';
+import { EmiTab } from './components/EmiTab';
 import logoUrl from './assets/logo.png';
 
 function App() {
@@ -39,7 +40,8 @@ function App() {
       <main className="flex-1 flex flex-col overflow-hidden relative max-w-full w-full bg-[var(--color-surface)] rounded-md border border-[var(--color-border)] shadow-sm">
         {activeTab === 0 && <CategoriesTab />}
         {activeTab === 1 && <TransactionsTab />}
-        {activeTab === 2 && <DashboardTab />}
+        {activeTab === 2 && <EmiTab />}
+        {activeTab === 3 && <DashboardTab />}
       </main>
     </div>
   );
