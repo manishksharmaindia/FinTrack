@@ -168,37 +168,41 @@ export function EmiTab() {
               {/* Name */}
               <div>
                 <label className="block text-xs font-bold text-[var(--color-text-tertiary)] mb-1.5 uppercase tracking-wider">EMI Name *</label>
-                <div className="relative">
-                  <CreditCard size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
+                <div className="relative flex items-center">
+                  <CreditCard size={18} className="absolute left-3.5 text-[var(--color-text-tertiary)]" />
                   <input value={form.name} onChange={e => f('name', e.target.value)} required placeholder="e.g. Home Loan, Car Loan"
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
+                    style={{ paddingLeft: '42px' }}
+                    className="w-full pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
                 </div>
               </div>
               {/* Lender */}
               <div>
                 <label className="block text-xs font-bold text-[var(--color-text-tertiary)] mb-1.5 uppercase tracking-wider">Lender / Bank</label>
-                <div className="relative">
-                  <Building2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
+                <div className="relative flex items-center">
+                  <Building2 size={18} className="absolute left-3.5 text-[var(--color-text-tertiary)]" />
                   <input value={form.lender} onChange={e => f('lender', e.target.value)} placeholder="e.g. SBI, HDFC"
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
+                    style={{ paddingLeft: '42px' }}
+                    className="w-full pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
                 </div>
               </div>
               {/* Row: Total Amount + EMI Amount */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-[var(--color-text-tertiary)] mb-1.5 uppercase tracking-wider">Total Loan Amt</label>
-                  <div className="relative">
-                    <IndianRupee size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
+                  <div className="relative flex items-center">
+                    <IndianRupee size={16} className="absolute left-3.5 text-[var(--color-text-tertiary)]" />
                     <input type="number" min={0} value={form.totalAmount || ''} onChange={e => f('totalAmount', Number(e.target.value))}
-                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
+                      style={{ paddingLeft: '42px' }}
+                      className="w-full pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[var(--color-text-tertiary)] mb-1.5 uppercase tracking-wider">Monthly EMI *</label>
-                  <div className="relative">
-                    <IndianRupee size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
+                  <div className="relative flex items-center">
+                    <IndianRupee size={16} className="absolute left-3.5 text-[var(--color-text-tertiary)]" />
                     <input type="number" min={0} value={form.emiAmount || ''} onChange={e => f('emiAmount', Number(e.target.value))} required
-                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
+                      style={{ paddingLeft: '42px' }}
+                      className="w-full pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
                   </div>
                 </div>
               </div>
@@ -206,18 +210,20 @@ export function EmiTab() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-[var(--color-text-tertiary)] mb-1.5 uppercase tracking-wider">Interest Rate %</label>
-                  <div className="relative">
-                    <Percent size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
+                  <div className="relative flex items-center">
+                    <Percent size={16} className="absolute left-3.5 text-[var(--color-text-tertiary)]" />
                     <input type="number" step="0.01" min={0} value={form.interestRate || ''} onChange={e => f('interestRate', Number(e.target.value))}
-                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
+                      style={{ paddingLeft: '42px' }}
+                      className="w-full pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[var(--color-text-tertiary)] mb-1.5 uppercase tracking-wider">Start Date</label>
-                  <div className="relative">
-                    <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
+                  <div className="relative flex items-center">
+                    <Calendar size={16} className="absolute left-3.5 text-[var(--color-text-tertiary)]" />
                     <input type="date" value={form.startDate} onChange={e => f('startDate', e.target.value)}
-                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
+                      style={{ paddingLeft: '42px' }}
+                      className="w-full pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
                   </div>
                 </div>
               </div>
@@ -225,28 +231,31 @@ export function EmiTab() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-[var(--color-text-tertiary)] mb-1.5 uppercase tracking-wider">Total EMIs *</label>
-                  <div className="relative">
-                    <Hash size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
+                  <div className="relative flex items-center">
+                    <Hash size={16} className="absolute left-3.5 text-[var(--color-text-tertiary)]" />
                     <input type="number" min={1} value={form.totalEmis || ''} onChange={e => f('totalEmis', Number(e.target.value))} required
-                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
+                      style={{ paddingLeft: '42px' }}
+                      className="w-full pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[var(--color-text-tertiary)] mb-1.5 uppercase tracking-wider">EMIs Paid</label>
-                  <div className="relative">
-                    <Hash size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
+                  <div className="relative flex items-center">
+                    <Hash size={16} className="absolute left-3.5 text-[var(--color-text-tertiary)]" />
                     <input type="number" min={0} value={form.emisPaid || ''} onChange={e => f('emisPaid', Number(e.target.value))}
-                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
+                      style={{ paddingLeft: '42px' }}
+                      className="w-full pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
                   </div>
                 </div>
               </div>
               {/* Notes */}
               <div>
                 <label className="block text-xs font-bold text-[var(--color-text-tertiary)] mb-1.5 uppercase tracking-wider">Notes</label>
-                <div className="relative">
-                  <StickyNote size={14} className="absolute left-3 top-3 text-[var(--color-text-tertiary)]" />
+                <div className="relative flex items-start">
+                  <StickyNote size={18} className="absolute left-3.5 top-3 text-[var(--color-text-tertiary)]" />
                   <textarea value={form.notes} onChange={e => f('notes', e.target.value)} rows={2} placeholder="Any additional details..."
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30 resize-none" />
+                    style={{ paddingLeft: '42px' }}
+                    className="w-full pr-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/30 resize-none" />
                 </div>
               </div>
               {/* Buttons */}
