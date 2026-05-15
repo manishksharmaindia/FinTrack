@@ -22,7 +22,7 @@ function CategoryCard({ cat, type, onEdit, onDelete }: {
       exit={{ opacity: 0, scale: 0.95 }}
       className="group relative bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-4 card-hover"
     >
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
