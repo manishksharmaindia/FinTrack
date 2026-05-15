@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { LayoutGrid, Receipt, BarChart3, Sun, Moon, Download, RotateCcw, Plus, Minus, X, BookOpen, HardDrive, Mail, CheckCircle2, Loader2, CreditCard } from 'lucide-react';
 import { useAppStore } from '../store';
-import { exportExpensesCSV, exportEarningsCSV, importCSV, resetDatabase, generateExpensesBlob, generateEarningsBlob, generateExpensesCSVString, generateEarningsCSVString } from '../exportUtils';
+import { exportExpensesCSV, exportEarningsCSV, exportEmisCSV, importCSV, resetDatabase, generateExpensesBlob, generateEarningsBlob, generateEmisBlob, generateExpensesCSVString, generateEarningsCSVString, generateEmisCSVString } from '../exportUtils';
 import { saveAs } from 'file-saver';
 import { HelpDoc } from './HelpDoc';
 import logoUrl from '../assets/logo.png';
@@ -39,14 +39,17 @@ export function Sidebar() {
       // Generate and download the CSV files
       const expResult = await generateExpensesBlob();
       const earnResult = await generateEarningsBlob();
+      const emiResult = await generateEmisBlob();
       saveAs(expResult.blob, expResult.filename);
-      // Small delay so browser doesn't block second download
       await new Promise(r => setTimeout(r, 500));
       saveAs(earnResult.blob, earnResult.filename);
+      await new Promise(r => setTimeout(r, 500));
+      saveAs(emiResult.blob, emiResult.filename);
 
       // Generate CSV strings for body embedding
       const expStr = await generateExpensesCSVString();
       const earnStr = await generateEarningsCSVString();
+      const emiStr = await generateEmisCSVString();
 
       // Build mailto link
       const today = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -58,6 +61,7 @@ export function Sidebar() {
         `Hi,\n\nPlease find the FinTrack application backup for ${today} below.\n\n` +
         `--- EXPENSES DATA (${expStr.count} records) ---\n${expStr.csv}\n\n` +
         `--- EARNINGS DATA (${earnStr.count} records) ---\n${earnStr.csv}\n\n` +
+        `--- EMI DATA (${emiStr.count} records) ---\n${emiStr.csv}\n\n` +
         `NOTE: We have also downloaded these files to your computer. Please attach them to this email if you need a standard backup file.\n\n` +
         `Thanks,\nFinTrack Team`
       );
@@ -81,7 +85,7 @@ export function Sidebar() {
     }
   };
 
-  const handleImport = async (type: 'expense' | 'earning') => {
+  const handleImport = async (type: 'expense' | 'earning' | 'emi') => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.csv';
@@ -203,6 +207,11 @@ export function Sidebar() {
                   className="w-full text-left px-[16px] py-[10px] text-sm font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-tertiary)] rounded-xl transition-all">
                   📤 Export Earnings
                 </button>
+                <button onClick={() => exportEmisCSV()}
+                  className="w-full text-left px-[16px] py-[10px] text-sm font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-tertiary)] rounded-xl transition-all font-bold text-primary-500">
+                  📤 Export EMI Summary
+                </button>
+                <div className="h-px bg-[var(--color-border)] my-1" />
                 <button onClick={() => handleImport('expense')}
                   className="w-full text-left px-[16px] py-[10px] text-sm font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-tertiary)] rounded-xl transition-all">
                   📥 Import Expenses
@@ -210,6 +219,10 @@ export function Sidebar() {
                 <button onClick={() => handleImport('earning')}
                   className="w-full text-left px-[16px] py-[10px] text-sm font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-tertiary)] rounded-xl transition-all">
                   📥 Import Earnings
+                </button>
+                <button onClick={() => handleImport('emi')}
+                  className="w-full text-left px-[16px] py-[10px] text-sm font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-tertiary)] rounded-xl transition-all font-bold text-primary-500">
+                  📥 Import EMI CSV
                 </button>
               </motion.div>
             )}

@@ -43,6 +43,26 @@ export async function exportEarningsCSV(year?: number) {
   saveAs(blob, `earnings_${year || 'all'}.csv`);
 }
 
+export async function exportEmisCSV() {
+  const emis = await db.emiEntries.toArray();
+  const data = emis.map((e) => ({
+    Name: e.name,
+    Lender: e.lender,
+    'Total Amount': e.totalAmount,
+    'EMI Amount': e.emiAmount,
+    'Interest Rate': e.interestRate,
+    'Total EMIs': e.totalEmis,
+    'EMIs Paid': e.emisPaid,
+    'Start Date': e.startDate,
+    Notes: e.notes,
+  }));
+
+  const csv = Papa.unparse(data);
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const today = new Date().toISOString().split('T')[0];
+  saveAs(blob, `EMI_Backup_${today}.csv`);
+}
+
 export async function generateExpensesBlob(year?: number): Promise<{ blob: Blob; filename: string; count: number }> {
   const expenses = await db.expenses.toArray();
   const categories = await db.expenseCategories.toArray();
@@ -86,6 +106,26 @@ export async function generateEarningsBlob(year?: number): Promise<{ blob: Blob;
   return { blob, filename: `FinTrack_Earnings_Backup_${today}.csv`, count: data.length };
 }
 
+export async function generateEmisBlob(): Promise<{ blob: Blob; filename: string; count: number }> {
+  const emis = await db.emiEntries.toArray();
+  const data = emis.map((e) => ({
+    Name: e.name,
+    Lender: e.lender,
+    'Total Amount': e.totalAmount,
+    'EMI Amount': e.emiAmount,
+    'Interest Rate': e.interestRate,
+    'Total EMIs': e.totalEmis,
+    'EMIs Paid': e.emisPaid,
+    'Start Date': e.startDate,
+    Notes: e.notes,
+  }));
+
+  const csv = Papa.unparse(data);
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const today = new Date().toISOString().split('T')[0];
+  return { blob, filename: `FinTrack_EMI_Backup_${today}.csv`, count: data.length };
+}
+
 export async function generateExpensesCSVString(year?: number): Promise<{ csv: string; count: number }> {
   const expenses = await db.expenses.toArray();
   const categories = await db.expenseCategories.toArray();
@@ -125,6 +165,24 @@ export async function generateEarningsCSVString(year?: number): Promise<{ csv: s
   return { csv, count: data.length };
 }
 
+export async function generateEmisCSVString(): Promise<{ csv: string; count: number }> {
+  const emis = await db.emiEntries.toArray();
+  const data = emis.map((e) => ({
+    Name: e.name,
+    Lender: e.lender,
+    'Total Amount': e.totalAmount,
+    'EMI Amount': e.emiAmount,
+    'Interest Rate': e.interestRate,
+    'Total EMIs': e.totalEmis,
+    'EMIs Paid': e.emisPaid,
+    'Start Date': e.startDate,
+    Notes: e.notes,
+  }));
+
+  const csv = Papa.unparse(data);
+  return { csv, count: data.length };
+}
+
 // Default colors to assign to newly-created categories during import
 const IMPORT_CATEGORY_COLORS = [
   '#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#8b5cf6',
@@ -132,7 +190,7 @@ const IMPORT_CATEGORY_COLORS = [
   '#14b8a6', '#a855f7', '#0ea5e9', '#f43f5e', '#64748b',
 ];
 
-export async function importCSV(file: File, type: 'expense' | 'earning'): Promise<number> {
+export async function importCSV(file: File, type: 'expense' | 'earning' | 'emi'): Promise<number> {
   return new Promise((resolve, reject) => {
     Papa.parse(file, {
       header: true,
@@ -189,7 +247,7 @@ export async function importCSV(file: File, type: 'expense' | 'earning'): Promis
               });
               count++;
             }
-          } else {
+          } else if (type === 'earning') {
             // --- Step 1: Collect all unique category names from the CSV ---
             const csvCategoryNames = new Set<string>();
             for (const row of results.data as any[]) {
@@ -235,6 +293,23 @@ export async function importCSV(file: File, type: 'expense' | 'earning'): Promis
                 source: row.Source || '',
                 notes: row.Notes || '',
                 isRecurring: false,
+                createdAt: new Date().toISOString(),
+              });
+              count++;
+            }
+          } else if (type === 'emi') {
+            for (const row of results.data as any[]) {
+              if (!row.Name || !row['EMI Amount']) continue;
+              await db.emiEntries.add({
+                name: row.Name,
+                lender: row.Lender || '',
+                totalAmount: Number(row['Total Amount']) || 0,
+                emiAmount: Number(row['EMI Amount']) || 0,
+                interestRate: Number(row['Interest Rate']) || 0,
+                totalEmis: Number(row['Total EMIs']) || 0,
+                emisPaid: Number(row['EMIs Paid']) || 0,
+                startDate: row['Start Date'] || '',
+                notes: row.Notes || '',
                 createdAt: new Date().toISOString(),
               });
               count++;
